@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Revisión Fotográfica</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f0f0f0;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            max-width: 500px;
+            width: 100%;
+        }
+        h2, h3 {
+            color: #333;
+        }
+        .parameter {
+            margin: 10px 0;
+            display: flex;
+            align-items: center;
+        }
+        .parameter input {
+            margin-right: 10px;
+            width: 25px;
+            height: 25px;
+        }
+        .parameter label {
+            font-weight: bold;
+            color: #555;
+            font-size: 16px;
+        }
+        .buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+        button {
+            background-color: #007bff;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        button.clear {
+            background-color: #dc3545;
+        }
+        button.clear:hover {
+            background-color: #c82333;
+        }
+        #resultado {
+            margin-top: 20px;
+            font-size: 18px;
+            color: #007bff;
+            white-space: pre-line;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Revisión de Conexiones</h2>
+        <form id="reviewForm">
+            <h3>Conexiones Realizadas</h3>
+            <div class="parameter">
+                <input type="checkbox" id="fotoPanoramica">
+                <label for="fotoPanoramica">Foto panorámica del servicio</label>
+            </div>
+            <div class="parameter">
+                <input type="checkbox" id="fotoMedidor">
+                <label for="fotoMedidor">Foto medidor serie y lectura</label>
+            </div>
+            <div class="parameter">
+                <input type="checkbox" id="fotoAutomatico">
+                <label for="fotoAutomatico">Foto automático</label>
+            </div>
+            <div class="parameter">
+                <input type="checkbox" id="fotoSellos">
+                <label for="fotoSellos">Foto sellos</label>
+            </div>
+            <div class="parameter">
+                <input type="checkbox" id="fotoCalidadServicio">
+                <label for="fotoCalidadServicio">Foto calidad servicio 220vlts</label>
+            </div>
+            <div class="parameter">
+                <input type="checkbox" id="fotoPlacaPoste">
+                <label for="fotoPlacaPoste">Foto placa poste</label>
+            </div>
+            <h3>Formulario de Inspección</h3>
+            <div class="parameter">
+                <input type="checkbox" id="formularioNuevosSuministros">
+                <label for="formularioNuevosSuministros">Formulario inspección de nuevos suministros</label>
+            </div>
+            <div class="buttons">
+                <button type="button" onclick="calcularEvaluacion()">Calcular Evaluación</button>
+                <button type="button" class="clear" onclick="limpiarFormulario()">Limpiar</button>
+            </div>
+        </form>
+        <p id="resultado"></p>
+    </div>
+    <script>
+        function calcularEvaluacion() {
+            // Parámetros de Conexiones Realizadas
+            let totalParams = 6;
+            let checkedParams = 0;
+            let mandatoryParams = ['fotoPanoramica', 'fotoMedidor', 'fotoAutomatico'];
+            let mandatoryChecked = true;
+
+            document.querySelectorAll('#reviewForm input[type=checkbox]').forEach(input => {
+                if (input.id.startsWith('foto') && input.checked) {
+                    checkedParams++;
+                }
+                if (mandatoryParams.includes(input.id) && !input.checked) {
+                    mandatoryChecked = false;
+                }
+            });
+
+            // Evaluar Conexiones Realizadas
+            let evaluacionRealizadas = 'Mala';
+            if (checkedParams === totalParams) {
+                evaluacionRealizadas = 'Buena';
+            } else if (mandatoryChecked) {
+                evaluacionRealizadas = 'Regular';
+            }
+
+            // Calcular puntuación para Conexiones Realizadas
+            let puntuacionRealizadas = evaluacionRealizadas === 'Buena' ? 50 : evaluacionRealizadas === 'Regular' ? 25 : 0;
+
+            // Evaluar Formulario de Inspección
+            let formularioChecked = document.getElementById('formularioNuevosSuministros').checked;
+            let puntuacionFormulario = formularioChecked ? 50 : 0;
+
+            // Calcular porcentaje provisorio
+            let porcentajeProvisorio = puntuacionFormulario + puntuacionRealizadas;
+
+            document.getElementById('resultado').textContent = `Evaluación de Conexiones: ${evaluacionRealizadas} (${puntuacionRealizadas}%)\nFormulario: ${formularioChecked ? 'Completo' : 'Incompleto'} (${puntuacionFormulario}%)\nPorcentaje Provisorio: ${porcentajeProvisorio}%`;
+        }
+
+        function limpiarFormulario() {
+            document.querySelectorAll('#reviewForm input[type=checkbox]').forEach(input => {
+                input.checked = false;
+            });
+            document.getElementById('resultado').textContent = '';
+        }
+    </script>
+</body>
+</html>
